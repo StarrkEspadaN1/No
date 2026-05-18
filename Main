@@ -1,0 +1,53 @@
+using System;
+using GeometryApp;
+using StockManagement;
+
+namespace Program
+{
+    class main
+    {
+        static void Main()
+        {
+            Console.OutputEncoding = System.Text.Encoding.UTF8;
+
+            // ===== Фигуры =====
+            Console.WriteLine("=== Фигуры ===");
+            var figures = new GeometricFigure[]
+            {
+                new Triangle(3,4,5),
+                new Square(5),
+                new Rhombus(6,8),
+                new Rectangle(4,7),
+                new Parallelogram(5,4,60),
+                new Trapezoid(10,6,4),
+                new Circle(3),
+                new Ellipse(5,3)
+            };
+            foreach (var f in figures)
+                Console.WriteLine($"{f.GetType().Name}: S={f.GetArea():F2}, P={f.GetPerimeter():F2}");
+
+            var composite = new CompositeFigure();
+            composite.Add(new Triangle(3,4,5));
+            composite.Add(new Square(4));
+            composite.Add(new Circle(2));
+            Console.WriteLine($"\nСоставная фигура: площадь = {composite.GetArea():F2}, периметр = {composite.GetPerimeter():F2}");
+
+            // ===== Товары и потоки =====
+            Console.WriteLine("\n=== Управление товарами ===");
+            var manager = new ProductFlowManager();
+            var soap = new HouseholdChemical("Мыло", 50.99m, 100, "Моющее", false);
+            var milk = new FoodProduct("Молоко", 89.90m, 50, DateTime.Now.AddDays(10), 52);
+
+            manager.Receive(soap, 100);
+            manager.Receive(milk, 50);
+            manager.ShowAll();
+
+            manager.Sell(soap.Id, 30);
+            manager.WriteOff(milk.Id, 5, "просрочка");
+            manager.Transfer(soap.Id, 20, "Склад 2");
+            manager.ShowAll();
+
+            Console.WriteLine("\nГотово.");
+        }
+    }
+}
