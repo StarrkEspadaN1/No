@@ -1,0 +1,53 @@
+using System;
+
+namespace StockManagement
+{
+    public abstract class Product
+    {
+        private static int nextId = 1;
+        public int Id { get; }
+        public string Name { get; set; }
+        public decimal Price { get; set; }
+        public int Quantity { get; set; }
+
+        protected Product(string name, decimal price, int quantity)
+        {
+            Id = nextId++;
+            Name = name;
+            Price = price;
+            Quantity = quantity > 0 ? quantity : 0;
+        }
+
+        public abstract string GetCategory();
+    }
+
+    public class HouseholdChemical : Product
+    {
+        public string ChemicalType { get; set; }
+        public bool IsHazardous { get; set; }
+
+        public HouseholdChemical(string name, decimal price, int quantity, string chemicalType, bool isHazardous)
+            : base(name, price, quantity)
+        {
+            ChemicalType = chemicalType;
+            IsHazardous = isHazardous;
+        }
+
+        public override string GetCategory() => "Бытовая химия";
+    }
+
+    public class FoodProduct : Product
+    {
+        public DateTime ExpirationDate { get; set; }
+        public int Calories { get; set; }
+
+        public FoodProduct(string name, decimal price, int quantity, DateTime expirationDate, int calories)
+            : base(name, price, quantity)
+        {
+            ExpirationDate = expirationDate;
+            Calories = calories;
+        }
+
+        public override string GetCategory() => "Продукты питания";
+    }
+}
