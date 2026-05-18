@@ -1,0 +1,29 @@
+using System;
+using System.Collections.Generic;
+
+namespace GeometryApp
+{
+    public class CompositeFigure : GeometricFigure
+    {
+        private List<GeometricFigure> figures = new List<GeometricFigure>();
+
+        public void Add(GeometricFigure fig) => figures.Add(fig);
+        public void Remove(GeometricFigure fig) => figures.Remove(fig);
+        public void Clear() => figures.Clear();
+        public IReadOnlyList<GeometricFigure> Figures => figures.AsReadOnly();
+
+        public override double GetArea()
+        {
+            double total = 0;
+            foreach (var f in figures) total += f.GetArea();
+            return total;
+        }
+
+        public override double GetPerimeter()
+        {
+            double total = 0;
+            foreach (var f in figures) total += f.GetPerimeter();
+            return total;
+        }
+    }
+}
