@@ -1,0 +1,63 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace StockManagement
+{
+    public class ProductFlowManager
+    {
+        private List<Product> products = new List<Product>();
+
+        public void Receive(Product product, int quantity)
+        {
+            if (quantity <= 0) throw new ArgumentException();
+            var existing = products.FirstOrDefault(p => p.Id == product.Id);
+            if (existing != null) existing.Quantity += quantity;
+            else products.Add(CloneProduct(product, quantity));
+            Console.WriteLine($"Поступление: {product.Name} +{quantity}");
+        }
+
+        public void Sell(int productId, int quantity)
+        {
+            var p = GetProductOrThrow(productId);
+            if (p.Quantity < quantity) throw new Exception("Недостаточно");
+            p.Quantity -= quantity;
+            Console.WriteLine($"Продано: {p.Name} -{quantity}");
+        }
+
+        public void WriteOff(int productId, int quantity, string reason)
+        {
+            var p = GetProductOrThrow(productId);
+            if (p.Quantity < quantity) throw new Exception("Недостаточно");
+            p.Quantity -= quantity;
+            Console.WriteLine($"Списано: {p.Name} -{quantity} ({reason})");
+        }
+
+        public void Transfer(int productId, int quantity, string destination)
+        {
+            var p = GetProductOrThrow(productId);
+            if (p.Quantity < quantity) throw new Exception("Недостаточно");
+            p.Quantity -= quantity;
+            Console.WriteLine($"Передано: {p.Name} -{quantity} в {destination}");
+        }
+
+        public void ShowAll()
+        {
+            Console.WriteLine("\n--- Остатки ---");
+            foreach (var p in products)
+                Console.WriteLine($"ID:{p.Id} {p.Name} ({p.GetCategory()}) – {p.Quantity} шт., {p.Price:C}");
+        }
+
+        private Product GetProductOrThrow(int id) =>
+            products.FirstOrDefault(p => p.Id == id) ?? throw new Exception("Товар не найден");
+
+        private Product CloneProduct(Product original, int quantity)
+        {
+            if (original is HouseholdChemical hc)
+                return new HouseholdChemical(hc.Name, hc.Price, quantity, hc.ChemicalType, hc.IsHazardous);
+            if (original is FoodProduct fp)
+                return new FoodProduct(fp.Name, fp.Price, quantity, fp.ExpirationDate, fp.Calories);
+            throw new NotSupportedException();
+        }
+    }
+}
